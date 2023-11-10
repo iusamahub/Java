@@ -1,0 +1,67 @@
+
+
+Section 1:
+
+1.select * from emp order by month(hiredate);
+
+2.
+
+3.select avg(sal),min(sal),max(sal),job from emp where job='clerk' or job='manager' group by job;
+
+4.select job from emp group by job having count(job)=(select min(r1) from (select count(job)r1 from emp group by job)e);
+
+5.select min(sal)as 'second min salary' from emp where sal>(select min(sal) from emp);
+
+6.select ename,job,sal,ifnull(comm,'No commission')comm from emp;
+
+7.select avg(sal),job from emp group by job having count(job)>3;
+
+8.select ename,sal from emp where sal>(select sal from emp where ename='ADAMS');
+
+9.select ename,sal from emp where sal>(select min(sal) from emp) and sal<(select max(sal) from emp);
+
+10.select year(hiredate) as 'year max emps joined' from emp group by hiredate having count(year(hiredate))=(select max(r1) from (select count(year(hiredate))r1 from emp group by hiredate)e);
+
+
+Section 2:
+
+1.
+
+DROP PROCEDURE IF EXISTS allemps;
+delimiter $
+CREATE PROCEDURE allemps()
+BEGIN
+	DECLARE _EMPNO,_MGR,_SAL,_COMM,_DEPTNO,_BONUSID int;
+	DECLARE _ENAME,_JOB,_uname,_PWD,_PHONE varchar(100);
+	DECLARE _GENDER char(1);
+	DECLARE _HIREDATE date;
+	DECLARE _isActive tinyint(1);
+	DECLARE CURSOR c1 for select EMPNO,ENAME,GENDER,JOB,MGR,HIREDATE,SAL
+	,COMM,DEPTNO,BONUSID,USER NAME,PWD,PHONE,isActive from emp;
+	open c1:
+		fetch _EMPNO,_ENAME,_GENDER,_JOB,_MGR,_HIREDATE,_SAL,_COMM,_DEPTNO,_BONUSID
+		,_uname,_PWD,_PHONE,_isActive;
+		select c1;
+	close c1;
+	
+end $
+delimiter ;
+
+
+2.
+create table student1(studentid int,namefirst varchar(50),namelast varchar(50),dob date,
+emailid varchar(50));
+
+
+DROP function IF EXISTS p2;
+delimiter $
+CREATE function p2(namef varchar(50),namel varchar(50),_dob date,email varchar(50)) RETURNS int
+DETERMINISTIC
+BEGIN
+	DECLARE z int;
+	select max(studentid)+1 into z from student1;
+	insert into student1(studentid,namefirst,namelast,dob,emailid) values(z,namef,namel,_dob,email);
+	return 0;
+end $
+delimiter ;
+
